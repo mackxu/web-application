@@ -6,17 +6,26 @@
 </head>
 <body>
 <script type="text/javascript">
-	// 创建类
-	var Class = function() {
+	// 创建类的过程
+	// 为类库添加继承
+	var Class = function(parent) {
 		var klass = function() {
 			this.init.apply(this, arguments);
 		};
+		if (parent) {										// 继承父类实例的原型
+			var subclass = function() {};
+			subclass.prototype = parent.prototype;
+			klass.prototype = new subclass;					// 改变klass的原型
+		}
 
 		klass.prototype.init = function() {};				// 默认的init()方法
 		
 		klass.fn = klass.prototype;							// 定义prototype的别名
 		
 		klass.fn.parent = klass;							// 定义类别名
+
+		klass._super = klass.__proto__;						// 理解不了，不知道指向哪里
+															
 		
 		klass.extend = function(obj) {						// 给类添加属性
 			var extended = obj.extended;
@@ -37,32 +46,22 @@
 		return klass;
 	};			// 此分号不能省略
 
-	// 创建Person类
-	// 并实例化它
 	(function() {
-		// 创建类
-		var Person = new Class;
-		console.dir(Person);								// Person类的属性
-
-		// 为类添加静态属性
-		Person.extend({
-			find: function(id) { console.log('zhangsan'); },
-			exists: function(id) { return true; }
-		});
-		// 为实例添加方法
-		Person.include({
-			// 初始化方法
-			init: function(name, sex) {
-				this.name = name;
-				this.sex = sex;
-			},
-			save: function() { console.log('save'); },
-			destory: function() { console.log('destory'); }
+		var Animal = new Class;
+		// console.dir(Animal);				// _super指向空函数
+		Animal.include({
+			eat: function() {
+				console.log('eat');
+			}
 		});
 
-		// 实例化对象
-		var p = new Person('lisi', 'w');
-		console.dir(p);										// Person实例的属性
+		// 继承Animal
+		var Cat = new Class(Animal);
+		console.dir(Cat);					// _super指向空函数
+		// 实例化Cat
+		var c = new Cat();
+		c.eat();
+
 	})();
 
 </script>
