@@ -60,10 +60,14 @@
 		Button.include({
 			init: function() {
 				this.element = document.getElementById('submit');
-				var that = this;
-				this.element.onclick = function() {
-					that.clickHandle();
-				}
+				// var that = this;
+				// this.element.onclick = function() {
+				// 	that.clickHandle();
+				// };
+				// 当有处理事件函数附加到元素上，
+				// 函数的this指向该元素，不能调用实例的属性
+				// 可以通过代理指定函数的作用域
+				this.element.onclick = this.proxy(this.clickHandle);
 			},
 			clickHandle: function() {
 				console.log('click');
