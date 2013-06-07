@@ -11,29 +11,59 @@
 		var klass = function() {
 			this.init.apply(this, arguments);
 		};
-		klass.prototype.init = function() {};
-		// 定义prototype的别名
-		klass.fn = klass.prototype;
-		// 定义类别名
+
+		klass.prototype.init = function() {};				// 默认的init()方法
 		
-		// 给类添加属性
-		klass.extend = function(obj) {
+		klass.fn = klass.prototype;							// 定义prototype的别名
+		
+		klass.fn.parent = klass;							// 定义类别名
+		
+		klass.extend = function(obj) {						// 给类添加属性
 			var extended = obj.extended;
 			for(var i in obj) {
 				klass[i] = obj[i];
 			}
 			if (extended) { extended(klass); }
 		};
-		// 给实例添加属性
-		klass.include = function(obj) {
+		
+		klass.include = function(obj) {						// 给实例添加属性
 			var included = obj.included;
 			for(var i in obj) {
 				klass.fn[i] = obj[i];
 			}
 			if (included) { included(klass); }
 		};
+
 		return klass;
-	}
+	};			// 此分号不能省略
+
+	// 创建Person类
+	// 并实例化它
+	(function() {
+		// 创建类
+		var Person = new Class;
+		console.dir(Person);								// Person类的属性
+
+		// 为类添加静态属性
+		Person.extend({
+			find: function(id) { console.log('zhangsan'); },
+			exists: function(id) { return true; }
+		});
+		// 为实例添加方法
+		Person.include({
+			// 初始化方法
+			init: function(name, sex) {
+				this.name = name;
+				this.sex = sex;
+			},
+			save: function() { console.log('save'); },
+			destory: function() { console.log('destory'); }
+		});
+
+		// 实例化对象
+		var p = new Person('lisi', 'w');
+		console.dir(p);										// Person实例的属性
+	})();
 
 </script>
 </body>
