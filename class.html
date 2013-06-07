@@ -5,6 +5,7 @@
 	<title>创建类</title>
 </head>
 <body>
+<input type="submit" value="点击我" id="submit" />
 <script type="text/javascript">
 	// 创建类的过程
 	// 为类库添加继承
@@ -25,6 +26,15 @@
 		klass.fn.parent = klass;							// 定义类别名
 
 		klass._super = klass.__proto__;						// 理解不了，不知道指向哪里
+
+		klass.proxy = function(func) {						// 添加一个proxy函数
+			var self = this;
+			return (function() {							// 返回一个指定执行作用域的函数
+				return func.apply(self, func);
+			});
+		}
+
+		klass.fn.proxy = klass.proxy;						// 为实例添加proxy方法
 															
 		klass.extend = function(obj) {						// 给类添加属性
 			var extended = obj.extended;
@@ -46,72 +56,23 @@
 	};			// 此分号不能省略
 
 	(function() {
-		var Animal = new Class;
-		// console.dir(Animal);				// _super指向空函数
-		Animal.include({
-			eat: function() {
-				console.log('eat');
+		var Button = new Class;
+		Button.include({
+			init: function() {
+				this.element = document.getElementById('submit');
+				var that = this;
+				this.element.onclick = function() {
+					that.clickHandle();
+				}
+			},
+			clickHandle: function() {
+				console.log('click');
 			}
 		});
 
-		// 继承Animal
-		var Cat = new Class(Animal);
-		Cat.include({
-			drink: function() {
-				console.log('drink');
-			}
-		});
-		console.dir(Cat);					// _super指向空函数
-		// 实例化Cat
-		var c = new Cat();
-		c.eat();
-		console.dir(c);
+		// 简单使用这个类
+		var btn = new Button();
 	})();
-
-/*	
-console.dir(c);
-parent
-	function()
-	
-drink
-	function()
-	
-eat
-	function()
-	
-init
-	function()
-	
-__proto__
-	Object { init=function(), parent=function(), drink=function(), 更多...}
-	
-	parent
-		function()
-		
-	drink
-		function()
-		
-	eat
-		function()
-		
-	init
-		function()
-		
-	__proto__
-		Object { init=function(), parent=function(), eat=function()}
-	
-		constructor
-			function()
-			
-		parent
-			function()
-			
-		eat
-			function()
-			
-		init
-			function()
-*/
 </script>
 </body>
 </html>
