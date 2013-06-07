@@ -26,7 +26,6 @@
 
 		klass._super = klass.__proto__;						// 理解不了，不知道指向哪里
 															
-		
 		klass.extend = function(obj) {						// 给类添加属性
 			var extended = obj.extended;
 			for(var i in obj) {
@@ -57,13 +56,62 @@
 
 		// 继承Animal
 		var Cat = new Class(Animal);
+		Cat.include({
+			drink: function() {
+				console.log('drink');
+			}
+		});
 		console.dir(Cat);					// _super指向空函数
 		// 实例化Cat
 		var c = new Cat();
 		c.eat();
-
+		console.dir(c);
 	})();
 
+/*	
+console.dir(c);
+parent
+	function()
+	
+drink
+	function()
+	
+eat
+	function()
+	
+init
+	function()
+	
+__proto__
+	Object { init=function(), parent=function(), drink=function(), 更多...}
+	
+	parent
+		function()
+		
+	drink
+		function()
+		
+	eat
+		function()
+		
+	init
+		function()
+		
+	__proto__
+		Object { init=function(), parent=function(), eat=function()}
+	
+		constructor
+			function()
+			
+		parent
+			function()
+			
+		eat
+			function()
+			
+		init
+			function()
+*/
 </script>
 </body>
 </html>
