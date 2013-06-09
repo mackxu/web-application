@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>自定义事件之选项卡</title>
+	<script type="text/javascript" src="../../jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="tab.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		// 使用插件
+		$('#tabs').tabs2('#tabsContent');
+	});
+	</script>
+	<link rel="stylesheet" type="text/css" href="tabs.css">
+</head>
+<body>
+	<ul id="tabs">
+		<li data-tab="users">users</li>
+		<li data-tab="groups">groups</li>
+	</ul>
+	<div id="tabsContent">
+		<div data-tab="users">uuuuuuuuuuu</div>
+		<div data-tab="groups">ggggggggg</div>
+	</div>
+</body>
+</html>
