@@ -19,14 +19,17 @@ jQuery.fn.tabs = function(control) {
 	$control.find('>[data-tab]').hide().first().show();		// 只显示第一个div
 };
 // 自定义事件tabs.change
+// 缓存选项卡元素，减少DOM直接查找
 jQuery.fn.tabs2 = function(control) {
 	var $tabs = $(this),
-		$control = $(control);
+		$control = $(control),
+		$lis = $tabs.find('li');
 
 	// 利用事件委托，监听单击选项卡事件
 	$tabs.delegate('li', 'click', function() {
 		// 单击的选项卡的data-tab属性值
-		var tabName = $(this).attr('data-tab');
+		// var tabName = $(this).attr('data-tab');
+		var tabName = this.getAttribute('data-tab');		// 自定义属性需要用getAttribute()获取
 		// 在单击时触发自定义事件
 		$tabs.trigger('tabs.change', tabName);
 	});
@@ -34,8 +37,8 @@ jQuery.fn.tabs2 = function(control) {
 	// 绑定自定义事件
 	// 解耦回调函数，易扩展
 	$tabs.bind('tabs.change', function(e, tabName) {
-		$tabs.find('li').removeClass('active');
-		$tabs.find('>[data-tab="'+ tabName +'"]').addClass('active');
+
+		$lis.removeClass('active').filter('[data-tab="'+ tabName +'"]').addClass('active');
 	});
 
 	$tabs.bind('tabs.change', function(e, tabName) {
@@ -44,6 +47,6 @@ jQuery.fn.tabs2 = function(control) {
 	});
 
 	// 初始化状态
-	var firstName = $tabs.find('li:first').attr('data-tab');
+	var firstName = $lis.first().attr('data-tab');
 	$tabs.trigger('tabs.change', firstName);
 };
