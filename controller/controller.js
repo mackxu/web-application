@@ -22,3 +22,18 @@
 
 	exports.Controller = my;
 })(jQuery, window);
+
+(function($, Controller) {
+	
+	var my = new Controller;
+
+	my.toggleClass = function(e) {
+		this.view.toggleClass('over', e.data);
+	}
+
+	my.load(function() {
+		this.view = $('#view');
+		this.view.mouseover(this.proxy(this.toggleClass, true));
+		this.view.mouseout(this.proxy(this.toggleClass, false));
+	});
+})(jQuery, Controller);
