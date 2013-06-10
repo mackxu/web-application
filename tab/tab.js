@@ -17,7 +17,10 @@ jQuery.fn.tabs = function(control) {
 	// 初始化状态
 	$tabs.find('li:first').addClass('active');				// 选中选项卡
 	$control.find('>[data-tab]').hide().first().show();		// 只显示第一个div
+
+	return this;
 };
+
 // 自定义事件tabs.change
 // 缓存选项卡元素，减少DOM直接查找
 jQuery.fn.tabs2 = function(control) {
@@ -49,4 +52,6 @@ jQuery.fn.tabs2 = function(control) {
 	// 初始化状态
 	var firstName = $lis.first().attr('data-tab');
 	$tabs.trigger('tabs.change', firstName);
+
+	return this;
 };
