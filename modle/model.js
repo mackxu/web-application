@@ -55,6 +55,16 @@ Model.extend({
 	// 创建新的模型时，设置一个新的records对象
 	created: function() {
 		this.records = {};
+	},
+	// 对给定的值做遍历、创建实例并更新records对象
+	populate: function(values) {
+		this.records = {};										// 重置model和records
+
+		for (var i = 0, len = values.length; i < len; i++) {
+			var record = this.init(values[i]);
+			record.newRecord = false;
+			this.records[record.id] = record;
+		}
 	}
 });												
 Model.include({
