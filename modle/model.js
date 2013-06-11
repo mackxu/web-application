@@ -1,3 +1,11 @@
+// GUID生成器
+Math.guid = function() {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random() * 16|0, v = c == 'x' ? r:(r&0x3|0x8);
+		return v.toString(16);
+	}).toUpperCase();
+};
+
 // 创建对象的关系映射
 // Model对象将用于创建新的模型和实例
 var Model = {
@@ -7,7 +15,6 @@ var Model = {
 	prototype: {
 		init: function() {}
 	},
-
 	// 创建新模型
 	create: function() {
 		var object = Object.create(this);						// 创建子类模型
@@ -40,16 +47,49 @@ var Model = {
 	}
 };
 
+Model.records = {};												// 用来保存资源对象
+Model.extend({
+	find: function(id) {
+		return this.records[id];
+	}
+});												
+Model.include({
+	newRecord: true,
+	create: function() {
+		if(!this.id) this.id = Math.guid();
+		this.newRecord = false;
+		this.parent.records[this.id] = this;
+	},
+	destory: function() {
+		delete this.parent.records[this.id];
+	},
+	update: function() {
+		this.parent.records[this.id];
+	},
+	save: function() {
+		this.newRecord ? this.create() : this.update();
+	}
+});
+
 (function() {
 	var User = Model.create();
-	User.extend({
-		find: function(id) { console.log(id); }
-	});
 	User.include({
 		init: function(attrs) {
-			return attrs;
+			jQuery.extend(this, attrs);
 		},
 		load: function() {}
 	});
-	var user = User.init({"id":2, "name":"zhangsan"});
+	var user = User.init();
+	user.name = 'zhangsan';
+	user.save();
+
+	var user2 = User.init();
+	user2.name = 'lisi';
+	user2.save();
+
+	console.dir(User);
 })();
+
+
+
+console.log(Math.guid());
