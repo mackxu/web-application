@@ -51,6 +51,10 @@ Model.records = {};												// 用来保存资源对象
 Model.extend({
 	find: function(id) {
 		return this.records[id];
+	},
+	// 创建新的模型时，设置一个新的records对象
+	created: function() {
+		this.records = {};
 	}
 });												
 Model.include({
@@ -58,16 +62,20 @@ Model.include({
 	create: function() {
 		if(!this.id) this.id = Math.guid();
 		this.newRecord = false;
-		this.parent.records[this.id] = this;
+		this.parent.records[this.id] = this.dup();
 	},
 	destory: function() {
 		delete this.parent.records[this.id];
 	},
 	update: function() {
-		this.parent.records[this.id];
+		this.parent.records[this.id] = this.dup();
 	},
 	save: function() {
 		this.newRecord ? this.create() : this.update();
+	},
+	// 深度克隆
+	dup: function() {
+		return jQuery.extend(true, {}, this);
 	}
 });
 
