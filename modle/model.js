@@ -48,6 +48,19 @@ var Model = {
 };
 
 Model.records = {};												// 用来保存资源对象
+Model.LocalStorage = {
+	saveLocal: function() {
+		var result = [];										// 把记录转换为数组
+		for(var i in this.records) {
+			result.push(this.records[i]);
+		}
+		localStorage[name] = JSON.stringify(result);
+	},
+	loadLocal: function(name) {
+		var result = JSON.parse(localStorage[name]);
+		this.populate(result);
+	}
+};
 Model.extend({
 	find: function(id) {
 		return this.records[id];
@@ -55,6 +68,7 @@ Model.extend({
 	// 创建新的模型时，设置一个新的records对象
 	created: function() {
 		this.records = {};
+		this.attributes = [];
 	},
 	// 对给定的值做遍历、创建实例并更新records对象
 	populate: function(values) {
@@ -65,6 +79,9 @@ Model.extend({
 			record.newRecord = false;
 			this.records[record.id] = record;
 		}
+	},
+	toJSON: function() {
+		return this.attributes();
 	}
 });												
 Model.include({
@@ -86,6 +103,27 @@ Model.include({
 	// 深度克隆
 	dup: function() {
 		return jQuery.extend(true, {}, this);
+	},
+	attributes: function() {
+		var result = {};
+		for(var i in this.parent.attributes) {
+			var attr = this.parent.attributes[i];
+			result[attr] = this[attr];
+		}
+		result.id = this.id;
+		return result;
+	},
+	// 将新纪录提交给服务器
+	createRemote: function(url, callback) {
+		$.post(url, this.attributes(), callback);
+	},
+	updateRemote: function(url, callback) {
+		$.ajax({
+			url: url,
+			data: this.attributes(),
+			success: callback,
+			type: 'PUT'
+		});
 	}
 });
 
