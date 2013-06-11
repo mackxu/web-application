@@ -18,18 +18,38 @@ var Model = {
 		this.inherited(object);
 		return object;
 	},
+
 	// 返回模型的实例
 	init: function() {
 		var instance = Object.create(this.prototype);			// 实例继承它的原型属性
 		instance.parent = this;									// 指明父类
 		instance.init.apply(instance, arguments);				// 委托，创建实例时调用初始化函数
 		return instance;
+	},
+	// 添加对象属性
+	extend: function(o) {
+		var extended = o.extended;
+		jQuery.extend(this, o);
+		if (typeof extended === 'function') extended(this);
+	},
+	// 添加实例属性
+	include: function(o) {
+		var included = o.included;
+		jQuery.extend(this.prototype, o);
+		if (typeof included === 'function') included(this);
 	}
 };
 
 (function() {
 	var User = Model.create();
-	var user = User.init();
-	console.dir(User);
-	console.dir(user);
+	User.extend({
+		find: function(id) { console.log(id); }
+	});
+	User.include({
+		init: function(attrs) {
+			return attrs;
+		},
+		load: function() {}
+	});
+	var user = User.init({"id":2, "name":"zhangsan"});
 })();
