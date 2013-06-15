@@ -1,5 +1,7 @@
 // 控制器
-// 规定了它该做什么事情
+// 规定了它能做什么事情
+// 问题，控制器的一部分在生成DOM之前就载入了，
+// 另一部分则在页面文档载入完成后触发的回调函数里
 (function($, exports) {
 	var my = function(includes) {
 		if (includes) this.include(includes);
@@ -31,12 +33,14 @@
 	var my = new Controller;
 
 	my.toggleClass = function(e) {
+		console.dir(this);
 		this.view.toggleClass('over', e.data);
-	}
+	};
 
 	my.load(function() {
 		this.view = $('#view');
-		this.view.mouseover(this.proxy(this.toggleClass, true));
-		this.view.mouseout(this.proxy(this.toggleClass, false));
+		this.view.mouseover(this.proxy(this.toggleClass), true);
+		this.view.mouseout(this.proxy(this.toggleClass), false);
+
 	});
 })(jQuery, Controller);
