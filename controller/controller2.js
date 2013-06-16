@@ -31,6 +31,7 @@
 						this[key] = this.options[key];
 					}
 					this.elements && this._refreshElements();		// 再添加与DOM相关的属性
+					this.events && this._delegateEvents();			// 添加监听事件
 				},
 				// 需要一个el属性，同时传入选择器
 				_$: function(selector) {
@@ -45,7 +46,18 @@
 				// 如果有，根据第1个空格来分割
 				_eventSplitter: /^(\w+)\s*(.*)$/,
 				// 委托事件
-				_delegateEvents: function() {}
+				_delegateEvents: function() {
+					for(var key in this.events) {
+						var handleName = this.events[key];			// 事件处理器
+						var handler = this.proxy(this[handleName]);
+
+						var match = key.match(this._eventSplitter);
+						var eventType = match[1], selector = match[2] || null;
+
+						// 如果selector为空，把事件添加到this.el上
+						this.el.on(eventType, selector, handler);
+					}
+				}
 			});
 			if (includes) { my.include(includes); };
 
@@ -64,11 +76,15 @@
 				"input[type=search]" : "searchInput",
 				"form" : "searchForm"
 			},
+			// 参数顺序: 事件类型 目标元素(可选) 回调函数字符串名
+			events: {
+				"submit form" : "searchHandle"
+			},
 			// 实例化时自动调用
 			init: function(viewId) {
 				// this.el = $(viewId);
 				// this._refreshElements();
-				this.searchForm.submit(this.proxy(this.searchHandle));
+				// this.searchForm.submit(this.proxy(this.searchHandle));
 			},
 
 			searchHandle: function() {
